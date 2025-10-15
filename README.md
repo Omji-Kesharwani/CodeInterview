@@ -4,8 +4,7 @@
 
 CodeInterview is an advanced online interview platform designed to streamline the technical interview process. Developed using **Next.js**, **TypeScript**, **Stream**, **Convex**, and **NextAuth.js with Google OAuth**, the platform facilitates seamless interview experiences with video calls, **real-time collaborative code editing**, and interview feedback capabilities. CodeInterview offers a dynamic environment for interviewers and interviewees, making technical assessments more effective and collaborative.
 
-![Landing Page Preview](./public/landing-page-preview.png)
-![Interview Call Preview](./public/interview-call-preview.png)
+![Landing Page Preview](./public/code-interview-1.png)
 
 ---
 
