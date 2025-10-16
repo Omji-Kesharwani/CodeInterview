@@ -26,57 +26,47 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const initializeClient = async () => {
-      // Prevent multiple simultaneous initializations
-      if (isInitializingRef.current || clientRef.current) return;
+  if (isInitializingRef.current || clientRef.current) return;
 
-      try {
-        isInitializingRef.current = true;
-        setIsLoading(true);
-        setError(null);
+  try {
+    isInitializingRef.current = true;
+    setIsLoading(true);
+    setError(null);
 
-        const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY;
-        if (!apiKey) {
-          setError("Stream API key not configured");
-          setIsLoading(false);
-          return;
-        }
+    const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY;
+    if (!apiKey) {
+      setError("Stream API key not configured");
+      setIsLoading(false);
+      return;
+    }
 
-        const sanitizedUserId = sanitizeUserId(
-          session?.user?.email || "unknown"
-        );
+    const sanitizedUserId = sanitizeUserId(session?.user?.email || "unknown");
 
-        // Create client with minimal configuration
-        const client = new StreamVideoClient({
-          apiKey,
-          user: {
-            id: sanitizedUserId,
-            name: session?.user?.name || session?.user?.email || "Unknown",
-          },
-          tokenProvider: streamTokenProvider,
-        });
+    // ✅ This automatically connects the user internally using tokenProvider
+    const client = new StreamVideoClient({
+      apiKey,
+      user: {
+        id: sanitizedUserId,
+        name: session?.user?.name || session?.user?.email || "Unknown",
+      },
+      tokenProvider: streamTokenProvider, // will call your server action to get token
+    });
 
-        try {
-          await client.connectUser({
-            id: sanitizedUserId,
-            name: session?.user?.name || session?.user?.email || "Unknown",
-          });
+    // ❌ remove this block:
+    // await client.connectUser({ id: ..., name: ... });
 
-          clientRef.current = client;
-          setStreamVideoClient(client);
-        } catch (error) {
-          console.error("Stream connection error:", error);
-          setError(
-            error instanceof Error ? error.message : "Connection failed"
-          );
-        }
-      } catch (error) {
-        console.error("Stream initialization error:", error);
-        setError("Failed to initialize Stream client");
-      } finally {
-        setIsLoading(false);
-        isInitializingRef.current = false;
-      }
-    };
+    // ✅ just set the client
+    clientRef.current = client;
+    setStreamVideoClient(client);
+  } catch (error) {
+    console.error("Stream initialization error:", error);
+    setError("Failed to initialize Stream client");
+  } finally {
+    setIsLoading(false);
+    isInitializingRef.current = false;
+  }
+};
+
 
     initializeClient();
 
